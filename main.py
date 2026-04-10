@@ -39,33 +39,6 @@ def fetch_poster(imdb_id):
 # -----------------------------------
 # 🎯 Recommendation Function
 # -----------------------------------
-def recommend(movie):
-    if movie not in movies['movie_title'].values:
-        return [], []
-
-    index = movies[movies['movie_title'] == movie].index[0]
-
-    distances = sorted(
-        list(enumerate(similarity[index])),
-        reverse=True,
-        key=lambda x: x[1]
-    )
-
-    names = []
-    posters = []
-
-    for i in distances[1:6]:
-        row = movies.iloc[i[0]]
-
-        movie_name = row['movie_title']
-        imdb_id = row['imdb_id']
-
-        poster = fetch_poster(imdb_id)
-
-        names.append(movie_name)
-        posters.append(poster)
-
-    return names, posters
 
 
 # -----------------------------------
@@ -78,19 +51,42 @@ movies = pickle.load(open('movie_list.pkl', 'rb'))
 # ✅ Fix column names
 movies.columns = movies.columns.str.replace(' ', '_')
 
-# -----------------------------------
-# 📦 Load similarity
-# -----------------------------------
-
 
 @st.cache_data
 def load_similarity():
-    url = "https://drive.google.com/uc?id=1WfW1JDFkIzUdBRy-lWXVmYiOlHZhiy6V"
-    output = "similarity.pkl"
-    gdown.download(url, output, quiet=False)
-    return pickle.load(open(output, 'rb'))
+    if not os.path.exists("similarity.pkl"):
+        url = "https://drive.google.com/uc?id=1wEfFlp0aJiPuzjmNzxr2GomCQ0Zl8N1_"
+        gdown.download(url, "similarity.pkl", quiet=False, fuzzy=True)
+
+    return pickle.load(open("similarity.pkl", "rb"))
 
 similarity = load_similarity()
+
+
+def recommend(movie):
+    if movie not in movies['movie_title'].values:
+        return [], []
+
+    index = movies[movies['movie_title'] == movie].index[0]
+
+    # ✅ Directly use stored similarities
+    distances = similarity[index]
+
+    names = []
+    posters = []
+
+    for i in distances[:5]:
+        row = movies.iloc[i[0]]
+
+        movie_name = row['movie_title']
+        imdb_id = row['imdb_id']
+
+        poster = fetch_poster(imdb_id)
+
+        names.append(movie_name)
+        posters.append(poster)
+
+    return names, posters
 
 
 # -----------------------------------
