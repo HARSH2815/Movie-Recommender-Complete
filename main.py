@@ -54,8 +54,7 @@ movies.columns = movies.columns.str.replace(' ', '_')
 
 @st.cache_data
 def load_similarity():
-    url="https://drive.google.com/file/d/1gZR5ix4q66N3mqKfIAnOuBaK-iQI1d77/view?usp=drive_link"
-    # url = "https://drive.google.com/uc?id=1wEfFlp0aJiPuzjmNzxr2GomCQ0Zl8N1_"
+    url="https://drive.google.com/uc?id=1gZR5ix4q66N3mqKfIAnOuBaK-iQI1d77"
     output = "similarity.pkl"
     gdown.download(url, output, quiet=False)
     return pickle.load(open(output, 'rb'))
