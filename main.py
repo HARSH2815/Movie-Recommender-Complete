@@ -52,7 +52,7 @@ movies = pickle.load(open('movie_list.pkl', 'rb'))
 movies.columns = movies.columns.str.replace(' ', '_')
 
 
-@st.cache_data
+# @st.cache_data
 def load_similarity():
     url="https://drive.google.com/uc?id=1gZR5ix4q66N3mqKfIAnOuBaK-iQI1d77"
     output = "similarity.pkl"
